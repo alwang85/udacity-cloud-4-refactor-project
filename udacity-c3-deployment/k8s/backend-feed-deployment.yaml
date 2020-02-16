@@ -12,7 +12,7 @@ spec:
         service: backend-feed
     spec:
       containers:
-      - image: scheele/udacity-restapi-feed
+      - image: alwang85/udacity-restapi-feed
         name: backend-feed
         imagePullPolicy: Always  
         resources:
@@ -48,11 +48,11 @@ spec:
             configMapKeyRef:
               name: env-config
               key: JWT_SECRET
-        - name: POSTGRESS_DB
+        - name: POSTGRESS_DATABASE
           valueFrom:
             configMapKeyRef:
               name: env-config
-              key: POSTGRESS_DB
+              key: POSTGRESS_DATABASE
         - name: POSTGRESS_HOST
           valueFrom:
             configMapKeyRef:
