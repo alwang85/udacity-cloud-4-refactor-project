@@ -3,16 +3,16 @@ services:
   reverseproxy:
     build:
       context: .
-    image: alwang85/reverseproxy 
+    image: alwang85/reverseproxy:${TRAVIS_BUILD_ID}
   backend_user:
     build:
       context: ../../udacity-c3-restapi-user
-    image: alwang85/udacity-restapi-user
+    image: alwang85/udacity-restapi-user:${TRAVIS_BUILD_ID}
   backend_feed:
     build:
       context: ../../udacity-c3-restapi-feed  
-    image: alwang85/udacity-restapi-feed
+    image: alwang85/udacity-restapi-feed:${TRAVIS_BUILD_ID}
   frontend:
     build:
       context: ../../udacity-c3-frontend  
-    image: alwang85/udacity-frontend:local
+    image: alwang85/udacity-frontend:${TRAVIS_BUILD_ID}
