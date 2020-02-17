@@ -1,0 +1,173 @@
+{
+  "kubeone_api": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "endpoint": "string"
+      }
+    ],
+    "value": {
+      "endpoint": "alwang85-udagram-demo-api-lb-7c03523d5597e977.elb.us-east-1.amazonaws.com"
+    }
+  },
+  "kubeone_hosts": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "control_plane": [
+          "object",
+          {
+            "cloud_provider": "string",
+            "cluster_name": "string",
+            "hostnames": [
+              "tuple",
+              [
+                "string",
+                "string",
+                "string"
+              ]
+            ],
+            "private_address": [
+              "tuple",
+              [
+                "string",
+                "string",
+                "string"
+              ]
+            ],
+            "public_address": [
+              "tuple",
+              [
+                "string",
+                "string",
+                "string"
+              ]
+            ],
+            "ssh_agent_socket": "string",
+            "ssh_port": "number",
+            "ssh_private_key_file": "string",
+            "ssh_user": "string"
+          }
+        ]
+      }
+    ],
+    "value": {
+      "control_plane": {
+        "cloud_provider": "aws",
+        "cluster_name": "alwang85-udagram-demo",
+        "hostnames": [
+          "ip-172-31-30-201.ec2.internal",
+          "ip-172-31-47-22.ec2.internal",
+          "ip-172-31-8-7.ec2.internal"
+        ],
+        "private_address": [
+          "172.31.30.201",
+          "172.31.47.22",
+          "172.31.8.7"
+        ],
+        "public_address": [
+          "184.73.19.216",
+          "3.85.144.174",
+          "18.204.35.88"
+        ],
+        "ssh_agent_socket": "env:SSH_AUTH_SOCK",
+        "ssh_port": 22,
+        "ssh_private_key_file": "",
+        "ssh_user": "ubuntu"
+      }
+    }
+  },
+  "kubeone_workers": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "alwang85-udagram-demo-pool1": [
+          "object",
+          {
+            "providerSpec": [
+              "object",
+              {
+                "cloudProviderSpec": [
+                  "object",
+                  {
+                    "ami": "string",
+                    "availabilityZone": "string",
+                    "diskIops": "number",
+                    "diskSize": "number",
+                    "diskType": "string",
+                    "instanceProfile": "string",
+                    "instanceType": "string",
+                    "region": "string",
+                    "securityGroupIDs": [
+                      "tuple",
+                      [
+                        "string"
+                      ]
+                    ],
+                    "subnetId": "string",
+                    "tags": [
+                      "object",
+                      {
+                        "alwang85-udagram-demo-workers": "string"
+                      }
+                    ],
+                    "vpcId": "string"
+                  }
+                ],
+                "operatingSystem": "string",
+                "operatingSystemSpec": [
+                  "object",
+                  {
+                    "distUpgradeOnBoot": "bool"
+                  }
+                ],
+                "sshPublicKeys": [
+                  "tuple",
+                  [
+                    "string"
+                  ]
+                ]
+              }
+            ],
+            "replicas": "number"
+          }
+        ]
+      }
+    ],
+    "value": {
+      "alwang85-udagram-demo-pool1": {
+        "providerSpec": {
+          "cloudProviderSpec": {
+            "ami": "ami-046842448f9e74e7d",
+            "availabilityZone": "us-east-1a",
+            "diskIops": 500,
+            "diskSize": 50,
+            "diskType": "gp2",
+            "instanceProfile": "alwang85-udagram-demo-host",
+            "instanceType": "t3.medium",
+            "region": "us-east-1",
+            "securityGroupIDs": [
+              "sg-02b6f7468f68af18c"
+            ],
+            "subnetId": "subnet-d87ddd95",
+            "tags": {
+              "alwang85-udagram-demo-workers": "pool1"
+            },
+            "vpcId": "vpc-fb7a5681"
+          },
+          "operatingSystem": "ubuntu",
+          "operatingSystemSpec": {
+            "distUpgradeOnBoot": false
+          },
+          "sshPublicKeys": [
+            "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC/HDwxao2LaZs8lQxPjC8/5dGe30C+Ilf6QYbfbtK8aLleOfu8Q74kegMpPHEUl1WdLL4FR7KWLYN4plgEstlcglYv8wYcgtS0nFEDy1u4xEDQzeJCO9iAe16coFf3bNCqd2FUCqwlIxX5XQ5RYd+KDiOjRaiAw8CyZDdlWJ7DxPwjkYdwuxzTgZKHnpagjAuIe2Q/5qxuTN+wSYc8bPgMrt1wz1xofeK7iMNMkd4tvllq2S3Q1lScbCUEEJaq8plrIu5qroP5mVrg2dVfdrugFPHaCPfD+jNao+hH4MKvPlYHOZk46hyt0nUZbQY6O5YAN3QkMUZjwjH8HebnMZ3h57/5ETiw0IIdBDotMBOFc6IwBN5b0F4pX477WT5bNHb0e4k5AnjkKTPAUNbwJPsn5fnJpkDQigAlxAccAh/shuRYxeXZQwKUQV+CxwIpm+skRo/dTU3RC1TwByyu5jQQ+Y1KIgVhTa0NGFGvlXMzQR3OM7Gx5AizvWvjyoir/OswD0fbMVG07oFR6BRRGoUOwama2UCh6A0PButG6JSXtfGJBBwhZRt2kp1xpvfPPp0GRsmpvlTOATxYauhJ50260+FHZKaO+tu9XP3/6gNoZGJsGAbpzf6MMTQI/P/z7j5Ql629ZZFOuxOZIjrmJpkDKVlv3bC9RVZn3NrCxiQMfQ== alwang85@gmail.com"
+          ]
+        },
+        "replicas": 1
+      }
+    }
+  }
+}
