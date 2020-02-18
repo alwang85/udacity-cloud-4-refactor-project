@@ -86,6 +86,31 @@ Containerizing the Instagram clone, setting it up with kubernetes on AWS, and li
     - run `'kubectl port-forward service/reverseproxy 8080:8080'`
     - Confirm the app works as expected at http://localhost:8100. Functionality includes logging in, registering, viewing the feed /w images, and upload images if logged in.
   
+4. Travis CI integration
+  - In the repository settings, ensure Travis-CI is enabled for the repository
+  - At https://travis-ci.com/, check if your repository is there.
+  - Setup environmental variables in jenkins
+    - DOCKER_USERNAME - Docker hub login username
+    - DOCKER_PASSWORD - Docker hub password. In Docker hub you can create an access code in lieu of your actual password as well
+    - KUBE_CA_CERT - certificate-authority-data in terraform/aws/alwang85-udagram-demo-kubeconfig
+    - KUBE_ENDPOINT - server URL in the file terraform/aws/alwang85-udagram-demo-kubeconfig
+    - KUBE_ADMIN_CERT - client-certificate-data in the file terraform/aws/alwang85-udagram-demo-kubeconfig
+    - KUBE_ADMIN_KEY - client-key-data in the file terraform/aws/alwang85-udagram-demo-kubeconfig
+  - Update .travis.yml in the root folder to run the desired steps:
+    - install prereqs
+    - docker-compose build to build the defined 4 images using the build config tagging with the travis build
+    - push images to docker hub + tag/push as latest for maintaining that tag
+    - update the images to AWS by `'kubectl set image'`, which is a rolling-update
+  - Verify build successed such as by running `'kubectl rollout status deployment frontend'`. Under `Pod Template -> Containers -> frontend -> Image: <image-name>` you can see if the image matches the latest in docker hub.
+
+  5. Deleting the cluster *IMPORTANT WHEN DONE*
+    - noting with the instances + a min of t3.medium as suggested by kubernetes, the cost of hosting this project is ~$6 a day on AWS
+    - go back to /terraform/aws
+    - run `'kubeone reset config.yaml --tfjson .'`
+    - wait a while and run `'terraform destroy'`
+
+
+
   
 
 

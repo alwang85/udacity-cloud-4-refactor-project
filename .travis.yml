@@ -14,11 +14,32 @@ before_install:
   - curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
   - chmod +x ./kubectl
   - sudo mv ./kubectl /usr/local/bin/kubectl
+  - docker login -u "${DOCKER_USERNAME}" -p "${DOCKER_PASSWORD}"
 
 
 
 install:
-  - docker-compose -f course-03/exercises/udacity-c3-deployment/docker/docker-compose-build.yaml build --parallel 
-
+  - docker-compose -f udacity-c3-deployment/docker/docker-compose-build.yaml build --parallel 
+  - docker push alwang85/reverseproxy:${TRAVIS_BUILD_ID}
+  - docker push alwang85/udacity-restapi-user:${TRAVIS_BUILD_ID}
+  - docker push alwang85/udacity-restapi-feed:${TRAVIS_BUILD_ID}
+  - docker push alwang85/udacity-frontend:${TRAVIS_BUILD_ID}
+  - docker tag alwang85/reverseproxy:${TRAVIS_BUILD_ID} alwang85/reverseproxy:latest
+  - docker tag alwang85/udacity-restapi-user:${TRAVIS_BUILD_ID} alwang85/udacity-restapi-user:latest
+  - docker tag alwang85/udacity-restapi-feed:${TRAVIS_BUILD_ID} alwang85/udacity-restapi-feed:latest
+  - docker tag alwang85/udacity-frontend:${TRAVIS_BUILD_ID} alwang85/udacity-frontend:latest
+  # keeping latest updated, too bad didn't see anything similar to git's multiple tags 
+  - docker push alwang85/reverseproxy:latest
+  - docker push alwang85/udacity-restapi-user:latest
+  - docker push alwang85/udacity-restapi-feed:latest
+  - docker push alwang85/udacity-frontend:latest
+  - sed -i -e 's|KUBE_CA_CERT|'"${KUBE_CA_CERT}"'|g' terraform/aws/alwang85-udagram-demo-kubeconfig-travis
+  - sed -i -e 's|KUBE_ENDPOINT|'"${KUBE_ENDPOINT}"'|g' terraform/aws/alwang85-udagram-demo-kubeconfig-travis
+  - sed -i -e 's|KUBE_ADMIN_CERT|'"${KUBE_ADMIN_CERT}"'|g' terraform/aws/alwang85-udagram-demo-kubeconfig-travis
+  - sed -i -e 's|KUBE_ADMIN_KEY|'"${KUBE_ADMIN_KEY}"'|g' terraform/aws/alwang85-udagram-demo-kubeconfig-travis
+  - kubectl --kubeconfig terraform/aws/alwang85-udagram-demo-kubeconfig-travis set image deployment/reverseproxy reverseproxy=alwang85/reverseproxy:$TRAVIS_BUILD_ID
+  - kubectl --kubeconfig terraform/aws/alwang85-udagram-demo-kubeconfig-travis set image deployment/backend-feed backend-feed=alwang85/udacity-restapi-feed:$TRAVIS_BUILD_ID
+  - kubectl --kubeconfig terraform/aws/alwang85-udagram-demo-kubeconfig-travis set image deployment/backend-user backend-user=alwang85/udacity-restapi-user:$TRAVIS_BUILD_ID
+  - kubectl --kubeconfig terraform/aws/alwang85-udagram-demo-kubeconfig-travis set image deployment/frontend frontend=alwang85/udacity-frontend:$TRAVIS_BUILD_ID
 
 
