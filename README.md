@@ -103,11 +103,34 @@ Containerizing the Instagram clone, setting it up with kubernetes on AWS, and li
     - update the images to AWS by `'kubectl set image'`, which is a rolling-update
   - Verify build successed such as by running `'kubectl rollout status deployment frontend'`. Under `Pod Template -> Containers -> frontend -> Image: <image-name>` you can see if the image matches the latest in docker hub.
 
-  5. Deleting the cluster *IMPORTANT WHEN DONE*
-    - noting with the instances + a min of t3.medium as suggested by kubernetes, the cost of hosting this project is ~$6 a day on AWS
-    - go back to /terraform/aws
-    - run `'kubeone reset config.yaml --tfjson .'`
-    - wait a while and run `'terraform destroy'`
+5. Deleting the cluster *IMPORTANT WHEN DONE*
+  - noting with the instances + a min of t3.medium as suggested by kubernetes, the cost of hosting this project is ~$6 a day on AWS
+  - go back to /terraform/aws
+  - run `'kubeone reset config.yaml --tfjson .'`
+  - wait a while and run `'terraform destroy'`
+
+6. Setting up Amazon Cloudwatch to read server logs
+  - basically follow the instructions at [amazon cloud watch docs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-logs.html)
+  - setup the IAM permissions so the cluster has access to cloudwatch
+  - run `'kubectl apply -f https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/cloudwatch-namespace.yaml'`
+  - after replacing the `cluster_name` (defined in terraform/aws/terraform.tfvars) and `region_name`, run `'kubectl create configmap cluster-info \
+    --from-literal=cluster.name=cluster_name \
+    --from-literal=logs.region=region_name -n amazon-cloudwatch'`
+  - Download and deploy the FluentD DaemonSet to the cluster by running `'kubectl apply -f https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/fluentd/fluentd.yaml'`
+  - to validate, run `'kubectl get pods -n amazon-cloudwatch'`
+  - verify by going to cloudwatch, and check the log groups for the following:
+    - /aws/containerinsights/Cluster_Name/application
+    - /aws/containerinsights/Cluster_Name/host
+    - /aws/containerinsights/Cluster_Name/dataplane
+  - If there's nothing there, ensure you have the right IAM permissions. 
+
+7. Doing an A/B deployment simultaneously
+  - One way to have simlutaneous versions running is to scale accordingly with a new deployment
+  - As an example, I created a replica of `'udacity-c3-deployment/k8s/backend-feed-deployment.yaml'` and saved it as `'udacity-c3-deployment/k8s/backend-feed-deployment-old.yaml'`, change the replicas from 2 to 1, change the name inside, and change the image to a specific different tag.
+  - run `'kubectl apply -f <new deployment file>'`
+  - run `'kubectl logs <pod name of new replica> -f'` and refresh the app running. You'll see the logs don't update on every refresh, and should only happen on average once every 3 times (due to the old deployment having 2 replicas, and the new one with the same label 1 replica)
+  - Once you are done, you can remove the deployment by `'kubectl delete <new_replica_name>'` if desired
+
 
 
 
